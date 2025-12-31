@@ -1,2 +1,120 @@
-# Sevim
-Arabul
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> AI Pro - Secure System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <style>
+        :root { --p: #4285f4; --s: #34a853; --b: #f8f9fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--b); margin: 0; display: flex; flex-direction: column; align-items: center; user-select: none; -webkit-user-select: none; }
+        .h { background: #fff; width: 100%; padding: 12px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .s-c { position: relative; margin: 15px; }
+        .s { position: relative; width: 400px; height: 400px; background: #1a1a1a; border-radius: 12px; overflow: hidden; touch-action: none; box-shadow: 0 8px 30px rgba(0,0,0,0.25); border: 3px solid #fff; display: flex; align-items: center; justify-content: center; }
+        #mI { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.1s ease-out; pointer-events: none; }
+        #cB { position: absolute; width: 120px; height: 160px; border: 2px solid #00f2ff; box-shadow: 0 0 0 4000px rgba(0,0,0,0.6); border-radius: 4px; cursor: move; display: none; z-index: 10; resize: both; overflow: hidden; min-width: 30px; min-height: 30px; }
+        #cB::after { content: "◢"; position: absolute; right: 2px; bottom: 2px; color: #fff; font-size: 14px; cursor: nwse-resize; }
+        .c-p { width: 100%; max-width: 400px; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .z-l { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: #555; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        .p-c { width: 100%; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; display: none; border: 1px solid #ddd; }
+        .p-b { width: 0%; height: 100%; background: linear-gradient(90deg, var(--p), var(--s)); transition: width 0.1s linear; }
+        .b-g { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .btn { padding: 12px 20px; border-radius: 25px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .btn-b { background: var(--p); color: #fff; }
+        .r { width: 95%; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 10px; }
+        .card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #ddd; text-align: center; }
+        .card img { width: 100%; height: 140px; object-fit: cover; pointer-events: none; }
+        .n-t { font-size: 11px; color: #666; padding: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #l { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+
+<div id="l"><h3> AI analiz Yükleniyor...</h3></div>
+<div class="h"><h2>AI analiz Pro</h2></div>
+
+<div class="s-c">
+    <div class="s" id="stg">
+        <img id="mI">
+        <div id="cB"></div>
+    </div>
+</div>
+
+<div class="c-p">
+    <div class="z-l"><span>BÜYÜTME (ZOOM)</span><span id="zv">1.0x</span></div>
+    <input type="range" id="zr" min="1" max="5" step="0.1" value="1">
+    <div class="p-c" id="pcnt"><div class="p-b" id="pbr"></div></div>
+    <div id="status" style="text-align: center; font-size: 11px; color: #999;">Analiz ve İsimlendirme Modülü Aktif</div>
+</div>
+
+<div class="b-g">
+    <input type="file" id="fi" webkitdirectory directory multiple hidden>
+    <button class="btn" onclick="document.getElementById('fi').click()">📂 Klasör</button>
+    <input type="file" id="ii" accept="image/*" hidden>
+    <button class="btn" onclick="document.getElementById('ii').click()">📷 Görsel</button>
+    <button class="btn btn-b" id="sbtn">🔍 ANALİZİ BAŞLAT</button>
+</div>
+
+<div class="r" id="results"></div>
+
+<script>
+    (function(){
+        var _0xK=['\x63\x6F\x6E\x74\x65\x78\x74\x6D\x65\x6E\x75','\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74','\x6F\x6E\x6B\x65\x79\x64\x6F\x77\x6E','\x6C\x6F\x61\x64','\x62\x6C\x6F\x63\x6B','\x6E\x6F\x6E\x65','\x70\x63\x6E\x74','\x70\x62\x72','\x6E\x61\x6D\x65'];
+        document['addEventListener'](_0xK[0],e=>e[_0xK[1]]());
+        document[_0xK[2]]=e=>{if(e['keyCode']==123||(e['ctrlKey']&&e['shiftKey']&&(e['keyCode']==73||e['keyCode']==74||e['keyCode']==67))||(e['ctrlKey']&&e['keyCode']==85))return false;};
+
+        var _0xM; async function _0xINIT(){_0xM=await mobilenet[_0xK[3]]();document['getElementById']('\x6C')['style']['display']=_0xK[5];}_0xINIT();
+
+        const _0xC=document['getElementById']('\x63\x42'),_0xI=document['getElementById']('\x6D\x49'),_0xZ=document['getElementById']('\x7A\x72'),_0xV=document['getElementById']('\x7A\x76');
+        _0xZ['oninput']=e=>{const v=e['target']['value'];_0xI['style']['transform']='scale('+v+')';_0xV['innerText']=v+'x';};
+
+        let _0xDG=!1,_0xX,_0xY,_0xL,_0xT;
+        _0xC['onpointerdown']=e=>{if(e['offsetX']>_0xC['offsetWidth']-20&&e['offsetY']>_0xC['offsetHeight']-20)return;_0xDG=!![];_0xX=e['clientX'];_0xY=e['clientY'];_0xL=_0xC['offsetLeft'];_0xT=_0xC['offsetTop'];_0xC['setPointerCapture'](e['pointerId']);};
+        window['onpointermove']=e=>{if(!_0xDG)return;let nL=_0xL+(e['clientX']-_0xX),nT=_0xT+(e['clientY']-_0xY);const s=document['getElementById']('\x73\x74\x67');nL=Math['max'](0,Math['min'](nL,s['offsetWidth']-_0xC['offsetWidth']));nT=Math['max'](0,Math['min'](nT,s['offsetHeight']-_0xC['offsetHeight']));_0xC['style']['left']=nL+'px';_0xC['style']['top']=nT+'px';};
+        window['onpointerup']=()=>_0xDG=!1;
+
+        document['getElementById']('\x69\x69')['onchange']=e=>{if(!e['target']['files'][0])return;_0xI['src']=URL['createObjectURL'](e['target']['files'][0]);_0xI['onload']=()=>{_0xI['style']['display']=_0xK[4];_0xC['style']['display']=_0xK[4];_0xC['style']['left']='140px';_0xC['style']['top']='120px';_0xZ['value']=1;_0xI['style']['transform']='scale(1)';_0xV['innerText']='1.0x';};};
+
+        document['getElementById']('\x73\x62\x74\x6E')['onclick']=async()=>{
+            const f=Array['from'](document['getElementById']('\x66\x69')['files'])['filter'](x=>x['type']['startsWith']('\x69\x6D\x61\x67\x65\x2F'));
+            if(f['length']===0)return alert('\x4B\x6C\x61\x73\x25\xF6\x72\x20\x73\x65\x25\xE7\x69\x6E\x21');
+            
+            const pc=document['getElementById'](_0xK[6]),pb=document['getElementById'](_0xK[7]);
+            pc['style']['display']=_0xK[4];
+            document['getElementById']('\x72\x65\x73\x75\x6C\x74\x73')['innerHTML']='';
+            
+            const tC=_0xCRP();
+            const tE=await _0xM['infer'](tC,!![])['dataSync']();
+            let m=[];
+
+            for(let i=0;i<f['length'];i++){
+                const img=await _0xIMG(f[i]);
+                const e=await _0xM['infer'](img,!![])['dataSync']();
+                m['push']({'file':f[i],'score':_0xSIM(tE,e)});
+                
+                let p=Math['round'](((i+1)/f['length'])*100);
+                pb['style']['width']=p+'%';
+                if(i%3===0)await new Promise(r=>requestAnimationFrame(r));
+            }
+            m['sort']((a,b)=>b['score']-a['score']);
+            _0xRES(m['slice'](0,15));
+            pc['style']['display']=_0xK[5];
+        };
+
+        function _0xCRP(){
+            const c=document['createElement']('\x63\x61\x6E\x76\x61\x73');c['width']=224;c['height']=224;
+            const ctx=c['getContext']('\x32\x64'),sc=parseFloat(_0xZ['value']),iR=_0xI['getBoundingClientRect'](),sR=document['getElementById']('\x73\x74\x67')['getBoundingClientRect']();
+            const x=(_0xC['offsetLeft']+(sR['left']-iR['left']))/sc,y=(_0xC['offsetTop']+(sR['top']-iR['top']))/sc,w=_0xC['offsetWidth']/sc,h=_0xC['offsetHeight']/sc;
+            ctx['drawImage'](_0xI,x*(_0xI['naturalWidth']/_0xI['width']),y*(_0xI['naturalHeight']/_0xI['height']),w*(_0xI['naturalWidth']/_0xI['width']),h*(_0xI['naturalHeight']/_0xI['height']),0,0,224,224);
+            return c;
+        }
+
+        function _0xIMG(f){return new Promise(r=>{const i=new Image();i['onload']=()=>{const c=document['createElement']('\x63\x61\x6E\x76\x61\x73');c['width']=224;c['height']=224;const s=Math['min'](i['width'],i['height']);c['getContext']('\x32\x64')['drawImage'](i,(i['width']-s)/2,(i['height']-s)/2,s,s,0,0,224,224);r(c);};i['src']=URL['createObjectURL'](f);});}
+        function _0xSIM(a,b){let d=0,nA=0,nB=0;for(let i=0;i<a['length'];i++){d+=a[i]*b[i];nA+=a[i]*a[i];nB+=b[i]*b[i];}return d/(Math['sqrt'](nA)*Math['sqrt'](nB));}
+        function _0xRES(l){const d=document['getElementById']('\x72\x65\x73\x75\x6C\x74\x73');l['forEach'](m=>{d['innerHTML']+='<div class="card"><img src="'+URL['createObjectURL'](m['file'])+'"><div style="padding:8px 0 0 0;color:green;font-weight:bold;font-size:14px;">%'+(m['score']*100)['toFixed'](1)+'</div><div class="n-t">'+m['file'][_0xK[8]]+'</div></div>';});}
+    })();
+</script>
+</body>
+</html>
